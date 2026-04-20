@@ -132,11 +132,11 @@ yitang-startup/
 ├── SKILL.md                        # 主入口：触发条件 + 4 阶段工作流 + Q&A 引导话术
 ├── README.md                       # 你正在看的这份
 ├── methodology/                    # 方法论深读（按需加载）
-│   ├── 一堂五步法.md                # 5 步法 + 259 演化史 + 关键假设三板斧
-│   ├── 产品内核.md                  # 解决方案的 4 关键词、6 段位、Sharp 心法
-│   ├── 单元模型.md                  # 商业模式算账 6 段位、易丢成本清单
-│   ├── 避坑清单.md                  # 15 类经典商业误判 + 触发指引
-│   └── 低成本验证.md                # 常识 / 调研 / 实验三种验证方法
+│   ├── 01-five-step-canvas.md      # 一堂五步法 + 259 画布演化史 + 关键假设三板斧
+│   ├── 02-product-core.md          # 产品内核：解决方案的 4 关键词、6 段位、Sharp 心法
+│   ├── 03-unit-model.md            # 单元模型：商业模式算账 6 段位、易丢成本清单
+│   ├── 04-pitfalls-checklist.md    # 避坑清单：15 类经典商业误判 + 触发指引
+│   └── 05-lean-validation.md       # 低成本验证：常识 / 调研 / 实验三种方式
 ├── templates/                      # 输出模板
 │   ├── canvas.html                 # HTML 可视化商业画布（一图速览，打印友好）
 │   ├── business-plan.md            # Markdown 表单式计划书（结构化、易迭代）

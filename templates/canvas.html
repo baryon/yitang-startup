@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{PROJECT_NAME}} · 一堂五步法商业画布 · {{VERSION}}</title>
+<style>
+  /* ============================================
+     一堂五步法商业画布 (259 Canvas)
+     生成时填充 {{...}} 占位符
+  ============================================ */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --c-bg: #f7f5f0;
+    --c-card: #ffffff;
+    --c-ink: #1a1a1a;
+    --c-muted: #6b6b6b;
+    --c-line: #e5e3dd;
+    --c-accent: #c9302c;
+    --c-value: #1f6feb;
+    --c-growth: #1a7f4e;
+    --c-warning: #d97706;
+    --c-success: #059669;
+    --c-danger: #dc2626;
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    --font-serif: "Songti SC", "STSong", Georgia, serif;
+  }
+
+  html, body {
+    background: var(--c-bg);
+    color: var(--c-ink);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+    font-size: 14px;
+  }
+
+  .page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 40px 60px;
+  }
+
+  /* ===== Header ===== */
+  header {
+    border-bottom: 2px solid var(--c-ink);
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+  }
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  h1.project-name {
+    font-family: var(--font-serif);
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .header-meta {
+    color: var(--c-muted);
+    font-size: 13px;
+    text-align: right;
+  }
+  .header-meta .version {
+    background: var(--c-ink);
+    color: white;
+    padding: 2px 10px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-right: 8px;
+  }
+  .one-liner {
+    margin-top: 14px;
+    font-size: 16px;
+    color: var(--c-muted);
+    font-style: italic;
+  }
+
+  /* ===== Hypothesis Banner ===== */
+  .hypothesis-banner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    background: var(--c-card);
+    border: 1px solid var(--c-line);
+    margin-bottom: 0;
+  }
+  .hyp-label {
+    padding: 10px 16px;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    color: white;
+  }
+  .hyp-value { background: var(--c-value); }
+  .hyp-growth { background: var(--c-growth); }
+
+  /* ===== 5-Step Canvas Grid =====
+     6-col underlying grid:
+     Top:    需求(2) · 解决方案(2) · 商业模式(2)
+     Bottom: 增长(3) · 壁垒(3)  (50/50)
+  ============================== */
+  .canvas {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-areas:
+      "need need solution solution business business"
+      "growth growth growth moat moat moat";
+    background: var(--c-card);
+    border: 1px solid var(--c-line);
+    border-top: none;
+    min-height: 520px;
+  }
+
+  .cell {
+    border-right: 1px solid var(--c-line);
+    border-bottom: 1px solid var(--c-line);
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    min-height: 240px;
+  }
+
+  .cell-need     { grid-area: need;     background: linear-gradient(180deg, #fafbfd 0%, #ffffff 100%); }
+  .cell-solution { grid-area: solution; background: linear-gradient(180deg, #fafbfd 0%, #ffffff 100%); }
+  .cell-business { grid-area: business; background: linear-gradient(180deg, #fafbfd 0%, #ffffff 100%); border-right: none; }
+  .cell-growth   { grid-area: growth;   background: linear-gradient(180deg, #f8fcf9 0%, #ffffff 100%); border-bottom: none; }
+  .cell-moat     { grid-area: moat;     background: linear-gradient(180deg, #f8fcf9 0%, #ffffff 100%); border-right: none; border-bottom: none; }
+
+  .cell-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--c-line);
+  }
+  .cell-num {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--c-muted);
+    line-height: 1;
+  }
+  .cell-title {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .cell-subtitle {
+    font-size: 11px;
+    color: var(--c-muted);
+    margin-left: 8px;
+  }
+
+  .cell-content {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #2a2a2a;
+    flex-grow: 1;
+  }
+  .cell-content ul { list-style: none; padding: 0; }
+  .cell-content li {
+    padding: 4px 0 4px 16px;
+    position: relative;
+  }
+  .cell-content li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--c-muted);
+  }
+  .cell-content li.todo {
+    color: var(--c-muted);
+    font-style: italic;
+  }
+  .cell-content li.todo::before {
+    content: "○";
+    color: var(--c-warning);
+  }
+  .cell-content strong {
+    color: var(--c-ink);
+    font-weight: 600;
+  }
+
+  /* ===== Key Assumptions Sidebar ===== */
+  .assumptions {
+    margin-top: 32px;
+    background: var(--c-card);
+    border: 1px solid var(--c-line);
+    border-left: 4px solid var(--c-accent);
+    padding: 24px 28px;
+  }
+  .assumptions h2 {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+  .assumptions .subtitle {
+    color: var(--c-muted);
+    font-size: 12px;
+    margin-bottom: 18px;
+  }
+  .assumption-list {
+    list-style: none;
+    padding: 0;
+  }
+  .assumption-item {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--c-line);
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 14px;
+    align-items: center;
+  }
+  .assumption-item:last-child { border-bottom: none; }
+  .assumption-rank {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--c-accent);
+    width: 32px;
+    text-align: center;
+  }
+  .assumption-text {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .assumption-stage {
+    font-size: 11px;
+    color: var(--c-muted);
+    border: 1px solid var(--c-line);
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+  .assumption-status {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .status-pending { background: #fef3c7; color: #92400e; }
+  .status-validated { background: #d1fae5; color: #065f46; }
+  .status-falsified { background: #fee2e2; color: #991b1b; }
+  .status-investigating { background: #dbeafe; color: #1e40af; }
+
+  /* ===== Validation Roadmap ===== */
+  .validation {
+    margin-top: 24px;
+    background: var(--c-card);
+    border: 1px solid var(--c-line);
+    padding: 24px 28px;
+  }
+  .validation h2 {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  .val-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .val-card {
+    border: 1px solid var(--c-line);
+    padding: 14px 16px;
+    border-radius: 4px;
+  }
+  .val-card-title {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .val-card-cost {
+    font-size: 11px;
+    color: var(--c-muted);
+    margin-bottom: 8px;
+  }
+  .val-card-actions { font-size: 12px; line-height: 1.6; color: #333; }
+
+  /* ===== Footer ===== */
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--c-line);
+    color: var(--c-muted);
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.8;
+  }
+  footer .quote {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--c-ink);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  /* ===== Print ===== */
+  @media print {
+    body { background: white; }
+    .page { padding: 16px; max-width: none; }
+    .canvas { min-height: 400px; }
+    .cell { min-height: 180px; padding: 12px 14px; }
+    h1.project-name { font-size: 24px; }
+    .assumptions, .validation { page-break-inside: avoid; }
+  }
+
+  /* ===== Mobile ===== */
+  @media (max-width: 900px) {
+    .canvas {
+      grid-template-areas:
+        "need"
+        "solution"
+        "business"
+        "growth"
+        "moat";
+      grid-template-columns: 1fr;
+    }
+    .cell { border-right: none; border-bottom: 1px solid var(--c-line); }
+    .val-grid { grid-template-columns: 1fr; }
+    .assumption-item { grid-template-columns: 1fr; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ============ HEADER ============ -->
+  <header>
+    <div class="header-row">
+      <h1 class="project-name">{{PROJECT_NAME}}</h1>
+      <div class="header-meta">
+        <span class="version">{{VERSION}}</span>
+        <span>{{DATE}}</span><br>
+        <span>一堂五步法 · 商业画布</span>
+      </div>
+    </div>
+    <div class="one-liner">{{ONE_LINER}}</div>
+  </header>
+
+  <!-- ============ HYPOTHESIS BANNER ============ -->
+  <div class="hypothesis-banner">
+    <div class="hyp-label hyp-value">价值假设 — 用户为什么选你</div>
+    <div class="hyp-label hyp-growth">增长假设 — 怎么持续做大</div>
+  </div>
+
+  <!-- ============ 5-STEP CANVAS ============ -->
+  <div class="canvas">
+
+    <!-- 需求 -->
+    <div class="cell cell-need">
+      <div class="cell-header">
+        <div>
+          <span class="cell-num">1</span>
+          <span class="cell-title">需求</span>
+          <span class="cell-subtitle">原点问题</span>
+        </div>
+      </div>
+      <div class="cell-content">
+        <strong>目标用户：</strong>
+        <ul>
+          {{NEED_USER_ITEMS}}
+        </ul>
+        <strong style="display:block; margin-top:10px;">使用场景：</strong>
+        <ul>
+          {{NEED_SCENARIO_ITEMS}}
+        </ul>
+        <strong style="display:block; margin-top:10px;">痛点 / 现有方案：</strong>
+        <ul>
+          {{NEED_PAIN_ITEMS}}
+        </ul>
+      </div>
+    </div>
+
+    <!-- 解决方案 -->
+    <div class="cell cell-solution">
+      <div class="cell-header">
+        <div>
+          <span class="cell-num">2</span>
+          <span class="cell-title">解决方案</span>
+          <span class="cell-subtitle">价值问题 · 产品内核</span>
+        </div>
+      </div>
+      <div class="cell-content">
+        <strong>产品内核（最小解决方案）：</strong>
+        <ul>
+          {{SOLUTION_CORE_ITEMS}}
+        </ul>
+        <strong style="display:block; margin-top:10px;">差异化锐度（Sharp）：</strong>
+        <ul>
+          {{SOLUTION_SHARP_ITEMS}}
+        </ul>
+      </div>
+    </div>
+
+    <!-- 商业模式 -->
+    <div class="cell cell-business">
+      <div class="cell-header">
+        <div>
+          <span class="cell-num">3</span>
+          <span class="cell-title">商业模式</span>
+          <span class="cell-subtitle">效率问题 · 单元模型</span>
+        </div>
+      </div>
+      <div class="cell-content">
+        <strong>单元模型类型：</strong>
+        <ul>
+          {{BUSINESS_UNIT_ITEMS}}
+        </ul>
+        <strong style="display:block; margin-top:10px;">关键收入 / 成本：</strong>
+        <ul>
+          {{BUSINESS_ECONOMICS_ITEMS}}
+        </ul>
+        <strong style="display:block; margin-top:10px;">行业 Benchmark：</strong>
+        <ul>
+          {{BUSINESS_BENCHMARK_ITEMS}}
+        </ul>
+      </div>
+    </div>
+
+    <!-- 增长 -->
+    <div class="cell cell-growth">
+      <div class="cell-header">
+        <div>
+          <span class="cell-num">4</span>
+          <span class="cell-title">增长</span>
+          <span class="cell-subtitle">复制问题</span>
+        </div>
+      </div>
+      <div class="cell-content">
+        <strong>获客渠道：</strong>
+        <ul>
+          {{GROWTH_CHANNEL_ITEMS}}
+        </ul>
+        <strong style="display:block; margin-top:10px;">CAC / LTV 预估：</strong>
+        <ul>
+          {{GROWTH_ECONOMICS_ITEMS}}
+        </ul>
+        <strong style="display:block; margin-top:10px;">可复制性：</strong>
+        <ul>
+          {{GROWTH_REPLICATION_ITEMS}}
+        </ul>
+      </div>
+    </div>
+
+    <!-- 壁垒 -->
+    <div class="cell cell-moat">
+      <div class="cell-header">
+        <div>
+          <span class="cell-num">5</span>
+          <span class="cell-title">壁垒</span>
+          <span class="cell-subtitle">终局问题</span>
+        </div>
+      </div>
+      <div class="cell-content">
+        <strong>3-5 年行业格局预判：</strong>
+        <ul>
+          {{MOAT_FUTURE_ITEMS}}
+        </ul>
+        <strong style="display:block; margin-top:10px;">壁垒维度：</strong>
+        <ul>
+          {{MOAT_DIMENSION_ITEMS}}
+        </ul>
+        <strong style="display:block; margin-top:10px;">已有积累：</strong>
+        <ul>
+          {{MOAT_EXISTING_ITEMS}}
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ KEY ASSUMPTIONS ============ -->
+  <section class="assumptions">
+    <h2>🔴 关键假设 — 必须优先验证的 Top {{ASSUMPTION_COUNT}}</h2>
+    <div class="subtitle">按"前置 / 高风险 / 单一变量"原则提炼。这些假设决定项目成败 — 如有任一证伪，需立即转型或调整。</div>
+    <ul class="assumption-list">
+      {{ASSUMPTION_ITEMS}}
+    </ul>
+  </section>
+
+  <!-- ============ VALIDATION ROADMAP ============ -->
+  <section class="validation">
+    <h2>🛠️ 验证路径 — 三种方式（成本递增）</h2>
+    <div class="val-grid">
+      <div class="val-card">
+        <div class="val-card-title">① 常识 · ¥0</div>
+        <div class="val-card-cost">行业经验值 / Benchmark</div>
+        <div class="val-card-actions">{{VALIDATION_COMMON_SENSE}}</div>
+      </div>
+      <div class="val-card">
+        <div class="val-card-title">② 调研 · ¥几千-几万</div>
+        <div class="val-card-cost">竞争对手 + 用户访谈</div>
+        <div class="val-card-actions">{{VALIDATION_RESEARCH}}</div>
+      </div>
+      <div class="val-card">
+        <div class="val-card-title">③ 实验 · ¥几万-几十万</div>
+        <div class="val-card-cost">精益 MVP 测试</div>
+        <div class="val-card-actions">{{VALIDATION_EXPERIMENT}}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="quote">"做业务 ≠ 做一个产品出来。做业务 = 验证一组关键假设是否成立。"</div>
+    本画布基于一堂五步法（259 商业画布）生成 · 文档版本 {{VERSION}} · 生成时间 {{DATE}}<br>
+    后续每轮调研后请更新版本号，并标记假设状态 ✅ 证实 / ❌ 证伪 / 🔄 调研中
+  </footer>
+
+</div>
+</body>
+</html>

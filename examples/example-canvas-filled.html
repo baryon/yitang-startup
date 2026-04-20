@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>示例 · 中式现烤汉堡店 · v0.1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --c-bg: #f7f5f0;
+    --c-card: #ffffff;
+    --c-ink: #1a1a1a;
+    --c-muted: #6b6b6b;
+    --c-line: #e5e3dd;
+    --c-accent: #c9302c;
+    --c-value: #1f6feb;
+    --c-growth: #1a7f4e;
+    --c-warning: #d97706;
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    --font-serif: "Songti SC", "STSong", Georgia, serif;
+  }
+  html, body { background: var(--c-bg); color: var(--c-ink); font-family: var(--font-sans); line-height: 1.55; font-size: 14px; }
+  .page { max-width: 1280px; margin: 0 auto; padding: 32px 40px 60px; }
+  header { border-bottom: 2px solid var(--c-ink); padding-bottom: 20px; margin-bottom: 28px; }
+  .header-row { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; flex-wrap: wrap; }
+  h1.project-name { font-family: var(--font-serif); font-size: 32px; font-weight: 700; letter-spacing: -0.5px; }
+  .header-meta { color: var(--c-muted); font-size: 13px; text-align: right; }
+  .header-meta .version { background: var(--c-ink); color: white; padding: 2px 10px; border-radius: 3px; font-weight: 600; margin-right: 8px; }
+  .one-liner { margin-top: 14px; font-size: 16px; color: var(--c-muted); font-style: italic; }
+  .hypothesis-banner { display: grid; grid-template-columns: 1fr 1fr; background: var(--c-card); border: 1px solid var(--c-line); }
+  .hyp-label { padding: 10px 16px; text-align: center; font-size: 12px; letter-spacing: 1px; font-weight: 600; color: white; }
+  .hyp-value { background: var(--c-value); }
+  .hyp-growth { background: var(--c-growth); }
+  .canvas { display: grid; grid-template-columns: repeat(6, 1fr); grid-template-areas: "need need solution solution business business" "growth growth growth moat moat moat"; background: var(--c-card); border: 1px solid var(--c-line); border-top: none; min-height: 520px; }
+  .cell { border-right: 1px solid var(--c-line); border-bottom: 1px solid var(--c-line); padding: 18px 22px; display: flex; flex-direction: column; min-height: 240px; }
+  .cell-need { grid-area: need; background: linear-gradient(180deg, #fafbfd 0%, #ffffff 100%); }
+  .cell-solution { grid-area: solution; background: linear-gradient(180deg, #fafbfd 0%, #ffffff 100%); }
+  .cell-business { grid-area: business; background: linear-gradient(180deg, #fafbfd 0%, #ffffff 100%); border-right: none; }
+  .cell-growth { grid-area: growth; background: linear-gradient(180deg, #f8fcf9 0%, #ffffff 100%); border-bottom: none; }
+  .cell-moat { grid-area: moat; background: linear-gradient(180deg, #f8fcf9 0%, #ffffff 100%); border-right: none; border-bottom: none; }
+  .cell-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed var(--c-line); }
+  .cell-num { font-family: var(--font-serif); font-size: 28px; font-weight: 700; color: var(--c-muted); line-height: 1; }
+  .cell-title { font-size: 15px; font-weight: 700; letter-spacing: 1px; }
+  .cell-subtitle { font-size: 11px; color: var(--c-muted); margin-left: 8px; }
+  .cell-content { font-size: 13px; line-height: 1.7; color: #2a2a2a; flex-grow: 1; }
+  .cell-content ul { list-style: none; padding: 0; }
+  .cell-content li { padding: 4px 0 4px 16px; position: relative; }
+  .cell-content li::before { content: "▸"; position: absolute; left: 0; color: var(--c-muted); }
+  .cell-content li.todo { color: var(--c-muted); font-style: italic; }
+  .cell-content li.todo::before { content: "○"; color: var(--c-warning); }
+  .cell-content strong { color: var(--c-ink); font-weight: 600; }
+  .assumptions { margin-top: 32px; background: var(--c-card); border: 1px solid var(--c-line); border-left: 4px solid var(--c-accent); padding: 24px 28px; }
+  .assumptions h2 { font-family: var(--font-serif); font-size: 22px; margin-bottom: 4px; }
+  .assumptions .subtitle { color: var(--c-muted); font-size: 12px; margin-bottom: 18px; }
+  .assumption-list { list-style: none; padding: 0; }
+  .assumption-item { padding: 14px 0; border-bottom: 1px solid var(--c-line); display: grid; grid-template-columns: auto 1fr auto auto; gap: 14px; align-items: center; }
+  .assumption-item:last-child { border-bottom: none; }
+  .assumption-rank { font-family: var(--font-serif); font-size: 24px; font-weight: 700; color: var(--c-accent); width: 32px; text-align: center; }
+  .assumption-text { font-size: 14px; line-height: 1.5; }
+  .assumption-stage { font-size: 11px; color: var(--c-muted); border: 1px solid var(--c-line); padding: 2px 8px; border-radius: 3px; }
+  .assumption-status { font-size: 11px; padding: 4px 10px; border-radius: 3px; font-weight: 600; white-space: nowrap; }
+  .status-pending { background: #fef3c7; color: #92400e; }
+  .status-validated { background: #d1fae5; color: #065f46; }
+  .status-investigating { background: #dbeafe; color: #1e40af; }
+  .validation { margin-top: 24px; background: var(--c-card); border: 1px solid var(--c-line); padding: 24px 28px; }
+  .validation h2 { font-family: var(--font-serif); font-size: 20px; margin-bottom: 16px; }
+  .val-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .val-card { border: 1px solid var(--c-line); padding: 14px 16px; border-radius: 4px; }
+  .val-card-title { font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+  .val-card-cost { font-size: 11px; color: var(--c-muted); margin-bottom: 8px; }
+  .val-card-actions { font-size: 12px; line-height: 1.6; color: #333; }
+  footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--c-line); color: var(--c-muted); font-size: 12px; text-align: center; line-height: 1.8; }
+  footer .quote { font-family: var(--font-serif); font-style: italic; color: var(--c-ink); font-size: 14px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="header-row">
+      <h1 class="project-name">中式现烤汉堡 · 二线城市连锁</h1>
+      <div class="header-meta">
+        <span class="version">v0.1</span>
+        <span>2026-04-20</span><br>
+        <span>一堂五步法 · 商业画布</span>
+      </div>
+    </div>
+    <div class="one-liner">用披萨工艺现烤汉堡胚 + 中式风味，做二线城市的麦当劳替代品。</div>
+  </header>
+
+  <div class="hypothesis-banner">
+    <div class="hyp-label hyp-value">价值假设 — 用户为什么选你</div>
+    <div class="hyp-label hyp-growth">增长假设 — 怎么持续做大</div>
+  </div>
+
+  <div class="canvas">
+
+    <div class="cell cell-need">
+      <div class="cell-header">
+        <div><span class="cell-num">1</span> <span class="cell-title">需求</span> <span class="cell-subtitle">原点问题</span></div>
+      </div>
+      <div class="cell-content">
+        <strong>目标用户：</strong>
+        <ul>
+          <li>二线城市 18-35 岁，月可支配 3k-8k</li>
+          <li>常吃西式快餐但渴望本土口味的年轻人</li>
+        </ul>
+        <strong style="display:block; margin-top:10px;">使用场景：</strong>
+        <ul>
+          <li>午餐 / 下午茶 / 外卖追剧</li>
+          <li>逛商场、加班、好友小聚</li>
+        </ul>
+        <strong style="display:block; margin-top:10px;">痛点：</strong>
+        <ul>
+          <li>西式快餐口味单一、千篇一律</li>
+          <li>中餐外卖等待久、热量高</li>
+          <li class="todo">真实用户访谈待补充（计划访 15 人）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cell cell-solution">
+      <div class="cell-header">
+        <div><span class="cell-num">2</span> <span class="cell-title">解决方案</span> <span class="cell-subtitle">价值问题 · 产品内核</span></div>
+      </div>
+      <div class="cell-content">
+        <strong>产品内核（最小解决方案）：</strong>
+        <ul>
+          <li>① 现烤手工汉堡胚（即时制作，温度口感稳定）</li>
+          <li>② 中式风味菜单（孜然、辣子鸡、糖醋等）</li>
+          <li>③ 25 元客单价（优于大牌西快 30-40 元）</li>
+        </ul>
+        <strong style="display:block; margin-top:10px;">差异化锐度（Sharp）：</strong>
+        <ul>
+          <li>同价位下，复购率高出传统西快 50%+（已在邻近城市验证）</li>
+          <li>单店月销售 15w+ vs 西快 8-10w</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cell cell-business">
+      <div class="cell-header">
+        <div><span class="cell-num">3</span> <span class="cell-title">商业模式</span> <span class="cell-subtitle">效率问题 · 单元模型</span></div>
+      </div>
+      <div class="cell-content">
+        <strong>单元模型：单店模型</strong>
+        <ul>
+          <li>店均面积 50-80m²，员工 5-8 人</li>
+          <li>启动成本 30-50 万 / 店</li>
+        </ul>
+        <strong style="display:block; margin-top:10px;">关键数据：</strong>
+        <ul>
+          <li>毛利率：65%（行业 60-70%）</li>
+          <li>租金占比：18%（健康 ≤ 20%）</li>
+          <li>人工占比：22%</li>
+          <li>预计回本周期：14-18 个月</li>
+        </ul>
+        <strong style="display:block; margin-top:10px;">Benchmark：</strong>
+        <ul>
+          <li>对标某连锁 100+ 门店模型</li>
+          <li class="todo">同行单店真实小票数据待调研</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cell cell-growth">
+      <div class="cell-header">
+        <div><span class="cell-num">4</span> <span class="cell-title">增长</span> <span class="cell-subtitle">复制问题</span></div>
+      </div>
+      <div class="cell-content">
+        <strong>获客渠道：</strong>
+        <ul>
+          <li>商圈位置自然客流（70%）</li>
+          <li>美团 / 大众点评团购（20%）</li>
+          <li>小红书种草 + 抖音本地推（10%）</li>
+        </ul>
+        <strong style="display:block; margin-top:10px;">CAC / LTV：</strong>
+        <ul>
+          <li>新客获客成本 ≈ ¥8（团购 + 自然）</li>
+          <li>单客 LTV（半年）≈ ¥240（月均复购 2 次）</li>
+          <li>LTV / CAC = 30 ✅</li>
+        </ul>
+        <strong style="display:block; margin-top:10px;">可复制性：</strong>
+        <ul>
+          <li>第 1-3 家店：自营，打磨 SOP</li>
+          <li>第 4-10 家店：直营 + 培养区域经理</li>
+          <li class="todo">加盟模式 vs 直营成本结构待算</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cell cell-moat">
+      <div class="cell-header">
+        <div><span class="cell-num">5</span> <span class="cell-title">壁垒</span> <span class="cell-subtitle">终局问题</span></div>
+      </div>
+      <div class="cell-content">
+        <strong>3-5 年行业格局：</strong>
+        <ul>
+          <li>中式汉堡赛道 2024 起爆款，2028 前会有 1-2 家头部</li>
+          <li>主要威胁：塔斯汀、乡村基跨界、麦当劳/华莱士反击</li>
+        </ul>
+        <strong style="display:block; margin-top:10px;">壁垒维度：</strong>
+        <ul>
+          <li>📦 供应链：自建汉堡胚中央厨房（计划 100 店时启动）</li>
+          <li>🏪 渠道：先发占据二线城市核心商圈</li>
+          <li>👤 创始人 20 年连锁餐饮经验（已具）</li>
+        </ul>
+        <strong style="display:block; margin-top:10px;">已有积累：</strong>
+        <ul>
+          <li>核心团队 5 人，前西式快餐高管 3 人</li>
+          <li>已签 2 个商圈意向</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <section class="assumptions">
+    <h2>🔴 关键假设 — 必须优先验证的 Top 3</h2>
+    <div class="subtitle">按"前置 / 高风险 / 单一变量"原则提炼。这些假设决定项目成败 — 如有任一证伪，需立即转型或调整。</div>
+    <ul class="assumption-list">
+      <li class="assumption-item">
+        <span class="assumption-rank">1</span>
+        <span class="assumption-text"><strong>本地用户真的喜欢中式汉堡口味</strong>，不只是邻近城市的偶发现象</span>
+        <span class="assumption-stage">需求</span>
+        <span class="assumption-status status-pending">⚠️ 待验证</span>
+      </li>
+      <li class="assumption-item">
+        <span class="assumption-rank">2</span>
+        <span class="assumption-text"><strong>能稳定生产高质量汉堡胚</strong>，不依赖创始人本人</span>
+        <span class="assumption-stage">解决方案</span>
+        <span class="assumption-status status-investigating">🔍 调研中</span>
+      </li>
+      <li class="assumption-item">
+        <span class="assumption-rank">3</span>
+        <span class="assumption-text"><strong>本地租金水平能让单店模型成立</strong>（占比 ≤ 20%）</span>
+        <span class="assumption-stage">商业模式</span>
+        <span class="assumption-status status-pending">⚠️ 待验证</span>
+      </li>
+    </ul>
+  </section>
+
+  <section class="validation">
+    <h2>🛠️ 验证路径 — 三种方式（成本递增）</h2>
+    <div class="val-grid">
+      <div class="val-card">
+        <div class="val-card-title">① 常识 · ¥0</div>
+        <div class="val-card-cost">行业经验值 / Benchmark</div>
+        <div class="val-card-actions">
+          • 找连锁餐饮老兵问租金占比基准<br>
+          • 查中式汉堡赛道公开报告
+        </div>
+      </div>
+      <div class="val-card">
+        <div class="val-card-title">② 调研 · ¥几千-几万</div>
+        <div class="val-card-cost">竞争对手 + 用户访谈</div>
+        <div class="val-card-actions">
+          • 入职头部门店 1 周，数 SKU 和小票<br>
+          • 访谈 15 个目标用户口味偏好<br>
+          • 跑 5 个商圈了解租金范围
+        </div>
+      </div>
+      <div class="val-card">
+        <div class="val-card-title">③ 实验 · ¥几万-¥20万</div>
+        <div class="val-card-cost">精益 MVP 测试</div>
+        <div class="val-card-actions">
+          • 借朋友烤炉测工艺（¥3k）<br>
+          • 在朋友店里搭酱料试吃（¥1w）<br>
+          • 借店小范围试卖测复购（¥3w）
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="quote">"做业务 ≠ 做一个产品出来。做业务 = 验证一组关键假设是否成立。"</div>
+    本画布基于一堂五步法（259 商业画布）生成 · 文档版本 v0.1 · 生成时间 2026-04-20<br>
+    后续每轮调研后请更新版本号，并标记假设状态 ✅ 证实 / ❌ 证伪 / 🔄 调研中
+  </footer>
+
+</div>
+</body>
+</html>
